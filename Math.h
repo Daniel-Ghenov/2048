@@ -1,3 +1,4 @@
+#pragma once;
 void deleteArray(int** array, int size);
 int pow(int a, int b);
 int len(int a);

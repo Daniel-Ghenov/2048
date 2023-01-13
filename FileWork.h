@@ -1,3 +1,4 @@
+#pragma once;
 char* intToChar(int a);
 void addNewline(char* line);
 bool stringCompare(const char* array1, const char* array2);

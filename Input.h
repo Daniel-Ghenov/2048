@@ -1,4 +1,4 @@
-
+#pragma once;
 char getInput();
 char* getMainMenuInput();
 char* getNickname();
