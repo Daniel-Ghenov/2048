@@ -1,14 +1,8 @@
 #include <cmath>
 #include <time.h>
-const int MAX_POWER_TO_SPAWN = 3;
+#include "Constants.h"
+#include "FileWork.h"
 
-void deleteArray(int** array, int size);
-int pow(int a, int b){
-    int power = 1;
-    for(int i {0}; i < b; i++)
-        power *= a;
-    return power;
-}
 int len(int a){
     int length = 0;
     while(a > 0){
@@ -63,7 +57,10 @@ void addRandomNumber(int** field, int* randomWeight, int fieldSize, int& turnCou
     int randEmptySquare = rand() % emptyListSize;
     field[emptySpaces[randEmptySquare][0]][emptySpaces[randEmptySquare][1]] = randomNumber;
 
-    deleteArray(emptySpaces, fieldSizeSquare);
+    for(size_t i {0}; i < fieldSizeSquare; i++){
+        delete[] emptySpaces[i];
+    }
+    delete[] emptySpaces;
     return;
 }
 bool arePossibleMoves(int** field, int fieldSize){

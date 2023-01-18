@@ -1,5 +1,5 @@
-#pragma once;
-void deleteArray(int** array, int size);
+#pragma once
+
 int pow(int a, int b);
 int len(int a);
 bool isEmptySpace(int** field, int fieldSize);

@@ -1,6 +1,5 @@
 #include <iostream>
-const int MAX_USER_INPUT = 101;
-const int numWidth = 7;
+#include "Constants.h"
 
 char getInput(){
     char direction;

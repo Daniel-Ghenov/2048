@@ -2,11 +2,10 @@
 #include "FileWork.h"
 #include "Math.h"
 #include "Input.h"
-#include "Control.h"
 #include "Console.h"
+#include "Control.h"
 #include "Movement.h"
-
-const int MAX_POWER_TO_SPAWN = 3;
+#include "Constants.h"
 
 void turnControl(int** field, int* randomWeight, int fieldSize, int& turnCount, int& score){
     score = claculateScore(field, fieldSize);    //A function which controls each turn

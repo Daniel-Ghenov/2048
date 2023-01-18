@@ -2,32 +2,11 @@
 #include <fstream>
 #include "Math.h"
 #include "Input.h"
+#include "Constants.h"
 
-const int LINE_MAX_SIZE = 120;
-const int LEADERBOARD_LENGTH = 5;
-const int MAX_INTAGER_LENGTH = 7;
-const int MAX_FILENAME_LENGTH = 23;
 
-char* intToChar(int a){
-    int alength = len(a);   //A function to help us put the score into a char array
-    char* array = new char[MAX_INTAGER_LENGTH]();
-    for(size_t i{0} ; i < alength; i++){
-        array[i] = a / pow(10, len(a) - 1) + '0';
-        a %= pow(10, len(a) - 1);
-    }
-    array[alength] = '\0';
-    return array;
-}
-void addNewline(char* line){
-    for(size_t i {0}; i < LINE_MAX_SIZE - 1; i++){  //A function to add a newline to the end of lines
-        if(line[i] == '\0'){                        //Since after reading them from the file the \n is lost
-            line[i] = '\n';
-            line[i + 1] = '\0';
-            break;
-        }
-    }
-}
 bool stringCompare(const char* array1, const char* array2){
+
     for(size_t i {0};;i++){
         if(array1[i] == '\0' && array2[i] == '\0'){
             return true;
@@ -37,6 +16,7 @@ bool stringCompare(const char* array1, const char* array2){
 
 }
 int copyString(char* to, const char* from, int position){
+
     int i = 0;
     while(from[i] != '\0' && from[i] != '\n'){
         to[position + i] = from[i++];
@@ -46,149 +26,125 @@ int copyString(char* to, const char* from, int position){
     }
     return i + position;
 }
-bool scoreCompare(const char* line,const char* score){
-    for(size_t i {5}; i > 0; i--){
-        if(line[4 + i] == ' ' && score[i] != '\0')
-            return true;
-        else if(line[4 + i] != ' ' && score[i] == '\0')
-            return false;
-        else if(line[4 + i] != ' ' && score[i] != '\0')
-            break;
-    }
-
-    for(size_t i {0}; i < 5; i++){                  //We compare our score to that of a line
-        if(line[4 + i] == ' ' && score[i] != '\0')  //The way the scoreboard is set up the score starts from the 4th place of each line
-            return true;
-        if(line[4 + i] == ' ' && score[i] == '\0')
-            return false;
-        if(score[i] < line[4 + i])
-            return false;
-        if(score[i] > line[4 + i])
-            return true;
-    }
-    return false;
-}
-void createNewLine(char* line, const char* nickname,const char* score, int place){
-    for(size_t i {0}; i < LINE_MAX_SIZE; i++){          //This function is used to construct a new line with our score and nickname
-        line[i] = ' ';
-    }
-    line[0] = place + '1';
-    line[1] = ':';                  
-    copyString(line, score, 3);
-    copyString(line, "Nickname:", 10);
-    int endLine = copyString(line, nickname, 20);    
-    line[endLine + 1] = '\n';
-    line[endLine + 2] = '\0';
-}
-void insertLine(char** leaderboard, char* nickname, char* score, int place){
-    for(int i = LEADERBOARD_LENGTH - 2; i > place - 1;i--){     //We move the lines down and then create a new one in the open spot
-        if(leaderboard[i][0] != ' '){
-            copyString(leaderboard[i + 1],leaderboard[i], -1);
-            leaderboard[i + 1][0] += 1;
-            addNewline(leaderboard[i + 1]);
-        }
-    }
-    createNewLine(leaderboard[place], nickname, score, place);
-}
 char* getFileName(int fieldSize){
+
     char* filename = new char[MAX_FILENAME_LENGTH];
     switch (fieldSize){ 
     case 4:
-        copyString(filename, "Leaderboard/4x4.txt", -1);
+        copyString(filename, "Leaderboard/4x4.txt", LINE_START);
         break;
     case 5:
-        copyString(filename, "Leaderboard/5x5.txt", -1);
+        copyString(filename, "Leaderboard/5x5.txt", LINE_START);
         break;
     case 6:
-        copyString(filename, "Leaderboard/6x6.txt", -1);
+        copyString(filename, "Leaderboard/6x6.txt", LINE_START);
         break;
     case 7:
-        copyString(filename, "Leaderboard/7x7.txt", -1);
+        copyString(filename, "Leaderboard/7x7.txt", LINE_START);
         break;
     case 8:
-        copyString(filename, "Leaderboard/8x8.txt", -1);
+        copyString(filename, "Leaderboard/8x8.txt", LINE_START);
         break;
     case 9:
-        copyString(filename, "Leaderboard/9x9.txt", -1);
+        copyString(filename, "Leaderboard/9x9.txt", LINE_START);
         break;
     default:
-        copyString(filename, "Leaderboard/10x10.txt", -1);
+        copyString(filename, "Leaderboard/10x10.txt", LINE_START);
         break;
     }
     return filename;
 }
-char** getLeaderboard(int fieldSize, char* filename){
-    std::ifstream inputFile;
-    inputFile.open(filename);
+void insertNickname(char** nicknameList, char* nickname, int score, int* scoreList, int place){
 
-    if(!inputFile.is_open()){
-        return nullptr;
+    for(int i = LEADERBOARD_LENGTH - 2; i > place - 1;i--){     //We move the lines down and then create a new one in the open spot
+        copyString(nicknameList[i + 1],nicknameList[i], -1);
+        int temp = scoreList[i];
+        scoreList[i] = scoreList[i + 1];
+        scoreList[i + 1] = temp;
     }
-        
-    char** leaderboard = new char* [LEADERBOARD_LENGTH];
-    for(size_t i {0}; i < LEADERBOARD_LENGTH; i++){    //We initialize the leaderboard as an array of pointers
-        leaderboard[i] = new char [LINE_MAX_SIZE];     //and initialize them to point to arrays of chars
-        for(size_t j {0}; j < LINE_MAX_SIZE; j++){     //for ease of use the leaderboards are initialized with spaces
-            leaderboard[i][j] = ' ';
-        }
-    }
-
-    for(size_t i {0};!inputFile.eof() && i < LEADERBOARD_LENGTH; i++){
-        inputFile.getline(leaderboard[i], LINE_MAX_SIZE);
-        addNewline(leaderboard[i]);
-    }
-    inputFile.close();
-    return leaderboard;
+    scoreList[place] = score;
+    copyString(nicknameList[place], nickname, LINE_START);
 }
-void checkLeaderboard(char** leaderboard, char* score, char* nickname){
+char** getLeaderboard(int fieldSize, char* filename, int* scoreList){
+
+    std::ifstream inputFile(filename);
+
+
+
+    char** nicknameList = new char* [LEADERBOARD_LENGTH];
+
+
+    for(size_t i {0}; i < LEADERBOARD_LENGTH; i++){    //We initialize the nicknameList as an array of pointers
+        nicknameList[i] = new char [MAX_USER_INPUT]();     //and initialize them to point to arrays of chars
+    }
+    if(!inputFile.is_open()){
+        return nicknameList;
+    }
+    for(size_t i {0};!inputFile.eof() && i < LEADERBOARD_LENGTH; i++){
+        inputFile.getline(nicknameList[i], MAX_USER_INPUT, ' ');
+        inputFile>> scoreList[i];
+        inputFile.ignore();
+    }
+
+    inputFile.close();
+    return nicknameList;
+}
+void checkLeaderboard(char** nicknameList, int score, int* scoreList, char* nickname){
 
     for(int i {0}; i < LEADERBOARD_LENGTH; i++){
-        if(leaderboard[i][0] == ' ' || leaderboard[i][0] == '\0'){  //We check the scoreboard to see whether we need to place 
-            createNewLine(leaderboard[i], nickname, score, i);      //our new score on it
-            break;
-        }else if(scoreCompare(leaderboard[i], score)){
-            insertLine(leaderboard, nickname, score, i);
+        if(score >= scoreList[i]){
+            insertNickname(nicknameList, nickname, score, scoreList, i);
             break;
         }
     }
+
 }
-void writeToFile(char** leaderboard, char* filename){
+void writeToFile(char** nicknameList, char* filename, int* scoreList){
+
     std::ofstream outputFile;
     outputFile.open(filename, std::fstream::trunc); //We paste the updated leaderboard into the file
 
+    if(!outputFile.is_open()){
+        return;
+    }
+
     for(size_t i {0}; i < LEADERBOARD_LENGTH; i++){
-        if(leaderboard[i][0] != ' ' || '\0')
-            outputFile << leaderboard[i];
+        if(scoreList[i] != 0)
+            outputFile << nicknameList[i]<<' '<< scoreList[i]<<' ';
     }
     outputFile.close();
 }
-void setLeaderboard(int fieldSize, int score, char* nickname){
-    char* filename = getFileName(fieldSize);
-    char* cScore = intToChar(score);
-    char** leaderboard = getLeaderboard(fieldSize, filename);
-    checkLeaderboard(leaderboard, cScore, nickname);
-    writeToFile(leaderboard, filename);
-    delete[] filename;
-    delete[] cScore;
-    deleteArray(leaderboard, LEADERBOARD_LENGTH);
+void setLeaderboard(int fieldSize, int score, char* nickname){   
 
+    char* filename = getFileName(fieldSize);
+    int* scoreList = new int[LEADERBOARD_LENGTH]();
+    char** nicknameList = getLeaderboard(fieldSize, filename, scoreList);
+    checkLeaderboard(nicknameList,score, scoreList, nickname);
+    writeToFile(nicknameList, filename, scoreList);
+    delete[] filename;
+    deleteArray(nicknameList, LEADERBOARD_LENGTH);
 }
 void printLeaderboard(){
     int fieldSize;
     std::cout<<"What size board do you want the leaderboard for?: ";
     std::cin>>fieldSize;
     char* filename = getFileName(fieldSize);
-    char** leaderboard = getLeaderboard(fieldSize, filename);
-    if(leaderboard == nullptr)
+    int* scoreList = new int[LEADERBOARD_LENGTH]();
+    char** nicknameList = getLeaderboard(fieldSize, filename, scoreList);
+
+    if(nicknameList == nullptr)
         return;
+
     std::cout<<std::endl;
+
     for(size_t i {0}; i < LEADERBOARD_LENGTH; i++){
-        if(leaderboard[i][0] != ' ' && leaderboard[i][0] != '\0')
-            std::cout<<leaderboard[i];
+        if(scoreList[i] != 0)
+            std::cout<<i + 1<<":  "<<scoreList[i]<<"  Nickname: "<<nicknameList[i]<<std::endl;
         else 
             break;
     }
     std::cout<<std::endl;
+
     delete[] filename;
-    deleteArray(leaderboard, LEADERBOARD_LENGTH);
+    deleteArray(nicknameList, LEADERBOARD_LENGTH);
 }

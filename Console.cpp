@@ -1,7 +1,7 @@
 #include <iostream>
 #include "Math.h"
-const int MAX_USER_INPUT = 101;
-const int numWidth = 7;
+#include "Constants.h"
+
 
 void clearConsole() {
 	std::cout<<"\033[;H"; // Moves cursor to the top left
