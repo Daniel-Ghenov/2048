@@ -1,4 +1,6 @@
 #pragma once
+#include <cmath>
+#include <time.h>
 
 int pow(int a, int b);
 int len(int a);
